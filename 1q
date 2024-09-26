@@ -1,0 +1,43 @@
+use std::collections::HashMap;
+use std::io;
+
+fn main() {
+    let mut company_list: HashMap<String, Vec<String>> = HashMap::new();
+    loop {
+        let mut text_interface = String::new();
+        io::stdin()
+            .read_line(&mut text_interface)
+            .expect("Type in text");
+
+        let dpts = text_interface
+            .split("to")
+            .collect::<Vec<_>>()
+            .get(1)
+            .unwrap()
+            .split_whitespace()
+            .collect::<Vec<&str>>();
+        println!("{:?}", dpts);
+        if text_interface.contains("End") {
+            break;
+        }
+
+        let command: Vec<&str> = text_interface.split_whitespace().collect();
+        println!("{text_interface}");
+
+        if command.contains(&"Add") {
+            let department = command.get(command.len() - 1).unwrap().to_string();
+            let dept_list = company_list.entry(department).or_insert(vec![]);
+            dept_list.push(command.get(1).unwrap().to_string());
+        }
+        if command.contains(&"Remove") {
+            let department = command.get(command.len() - 1).unwrap().to_string();
+            let dept_list = company_list.entry(department).or_insert(vec![]);
+            let i = dept_list
+                .iter()
+                .position(|x| *x == command.get(1).unwrap().to_string())
+                .unwrap();
+            dept_list.remove(i);
+        }
+        println!("All the departments: {:?}", company_list);
+    }
+}
